@@ -1,0 +1,31 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Light Mode Theme */
+:root {
+  --background: #ffffff;
+  --foreground: #333333;
+  --primary: #89CFF0;   /* Baby blue */
+  --secondary: #FFC0CB; /* Light pink */
+  --accent: #FFFACD;    /* Pastel yellow */
+  --neutral: #f5f5f5;
+}
+
+/* Dark Mode Theme */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #1e1e2f;
+    --foreground: #f5f5f5;
+    --primary: #89CFF0;   /* Retain baby blue for consistency */
+    --secondary: #ffb6c1; /* A slightly bolder pink */
+    --accent: #fffacd;    /* Keep pastel yellow */
+    --neutral: #333333;
+  }
+}
+
+body {
+  color: var(--foreground);
+  background: var(--background);
+  font-family: Arial, Helvetica, sans-serif;
+}
