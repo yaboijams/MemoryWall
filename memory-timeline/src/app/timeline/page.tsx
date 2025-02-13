@@ -1,8 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { db } from "@/firebase/firebaseConfig";
+import { db, storage } from "@/firebase/firebaseConfig";
 import { collection, getDocs, query, orderBy } from "firebase/firestore";
+import { getDownloadURL, ref } from "firebase/storage";
 import { motion } from "framer-motion";
 
 interface Memory {
@@ -14,19 +15,28 @@ interface Memory {
 }
 
 /**
- * Returns a deterministic rotation angle based on a string key.
- * The value will be between -7.5 and 7.5 degrees.
+ * Returns a deterministic rotation angle (in degrees) based on a string key.
+ * The value will be between -3 and 3 degrees.
  */
 function getRotationAngle(key: string): number {
   let hash = 0;
   for (let i = 0; i < key.length; i++) {
     hash = key.charCodeAt(i) + ((hash << 5) - hash);
   }
-  return (Math.abs(hash) % 15) - 7.5;
+  return (Math.abs(hash) % 7) - 3; // Range: -3 to 3 degrees
 }
 
-// Sample photos to use if a memory doesn't include one
-const samplePhotos = [
+/**
+ * Checks if the provided URL (ignoring query parameters) ends with a valid image extension.
+ */
+function isValidImage(url: string): boolean {
+  const validExtensions = [".jpeg", ".jpg", ".gif", ".png"];
+  const baseUrl = url.split('?')[0].toLowerCase();
+  return validExtensions.some((ext) => baseUrl.endsWith(ext));
+}
+
+// Default sample photos (in case fetching from Storage fails)
+const defaultSamplePhotos = [
   "https://wallpapersok.com/images/hd/winking-cute-girl-shen9t2b3lrcv8he.jpg",
   "https://i.redd.it/cute-girl-drawing-reference-is-from-pinterest-also-my-v0-h95tudnrceaa1.jpg?width=736&format=pjpg&auto=webp&s=80f60748b160faa32ef449bb6d35ad61209fcef8",
   "https://photoshulk.com/wp-content/uploads/Cute-Girl-Adventure-Photo.jpg",
@@ -34,7 +44,9 @@ const samplePhotos = [
 
 export default function Timeline() {
   const [memories, setMemories] = useState<Memory[]>([]);
+  const [fallbackPhotos, setFallbackPhotos] = useState<string[]>([]);
 
+  // Fetch memories from Firestore
   useEffect(() => {
     async function fetchMemories() {
       try {
@@ -53,16 +65,43 @@ export default function Timeline() {
     fetchMemories();
   }, []);
 
-  // If no memories are fetched, use sample photos for testing
-  const displayCards = memories.length > 0 
-    ? memories 
-    : samplePhotos.map((url, index) => ({
-        id: `sample-${index}`,
-        caption: "Sample Memory Caption",
-        date: { seconds: Date.now() / 1000 },
-        imageUrl: url,
-        description: "A treasured memory.",
-      }));
+  // Fetch fallback photos from Firebase Storage ("n1", "n2", "n3")
+  useEffect(() => {
+    async function fetchFallbackPhotos() {
+      try {
+        const photoNames = ["n1", "n2", "n3"];
+        const urls = await Promise.all(
+          photoNames.map((name) => getDownloadURL(ref(storage, name)))
+        );
+        setFallbackPhotos(urls);
+      } catch (error) {
+        console.error("Error fetching fallback photos:", error);
+        // Fallback to default sample photos if error occurs
+        setFallbackPhotos(defaultSamplePhotos);
+      }
+    }
+    fetchFallbackPhotos();
+  }, []);
+
+  // If no memories are fetched, build fallback cards from fallbackPhotos
+  const displayCards =
+    memories.length > 0
+      ? memories
+      : fallbackPhotos.length > 0
+      ? fallbackPhotos.map((url, index) => ({
+          id: `sample-${index}`,
+          caption: "Sample Memory Caption",
+          date: { seconds: Date.now() / 1000 },
+          imageUrl: url,
+          description: "A treasured memory.",
+        }))
+      : defaultSamplePhotos.map((url, index) => ({
+          id: `sample-${index}`,
+          caption: "Sample Memory Caption",
+          date: { seconds: Date.now() / 1000 },
+          imageUrl: url,
+          description: "A treasured memory.",
+        }));
 
   return (
     <div className="p-4">
@@ -75,8 +114,14 @@ export default function Timeline() {
       {/* Responsive grid layout for the Polaroid-style cards */}
       <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
         {displayCards.map((memory, index) => {
-          // Use memory.imageUrl if available, otherwise choose a sample photo (based on index)
-          const photoUrl = memory.imageUrl || samplePhotos[index % samplePhotos.length];
+          // Determine which URL to use: if memory.imageUrl exists and is valid, use it; otherwise use a fallback.
+          const photoUrl =
+            memory.imageUrl && isValidImage(memory.imageUrl)
+              ? memory.imageUrl
+              : fallbackPhotos.length > 0
+              ? fallbackPhotos[index % fallbackPhotos.length]
+              : defaultSamplePhotos[index % defaultSamplePhotos.length];
+
           return (
             <motion.div
               key={memory.id}

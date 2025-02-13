@@ -1,3 +1,4 @@
+import Link from "next/link";
 import "./globals.css";
 
 export const metadata = {
@@ -12,7 +13,6 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      {/* The body uses your custom background and foreground colors */}
       <body
         className="min-h-screen"
         style={{
@@ -20,7 +20,6 @@ export default function RootLayout({
           color: "var(--foreground)",
         }}
       >
-        {/* Header uses the primary color for background */}
         <header
           className="p-4"
           style={{
@@ -28,7 +27,28 @@ export default function RootLayout({
             color: "var(--foreground)",
           }}
         >
-          <h1 className="text-2xl font-bold">Memory Timeline</h1>
+          <div className="flex items-center justify-between">
+            <h1 className="text-2xl font-bold">Memory Timeline</h1>
+            <nav>
+              <ul className="flex space-x-4">
+                <li>
+                  <Link href="/login" className="hover:underline">
+                    Login
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/upload" className="hover:underline">
+                    Upload
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/timeline" className="hover:underline">
+                    Timeline
+                  </Link>
+                </li>
+              </ul>
+            </nav>
+          </div>
         </header>
         <main className="p-4">{children}</main>
       </body>
