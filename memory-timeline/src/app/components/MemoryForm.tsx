@@ -9,7 +9,7 @@ export default function MemoryForm() {
   const [title, setTitle] = useState("");
   const [caption, setCaption] = useState("");
   const [date, setDate] = useState("");
-  const [mediaFile, setMediaFile] = useState<File | null>(null); // renamed
+  const [imageFile, setImageFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -19,23 +19,20 @@ export default function MemoryForm() {
 
     try {
       let imageUrl = "";
-      if (mediaFile) {
-        console.log("Uploading media file:", mediaFile.name);
+      if (imageFile) {
+        console.log("Uploading file:", imageFile.name);
 
-        // Decide folder based on file type (image vs. video)
-        const isVideo = mediaFile.type.startsWith("video/");
-        const folderName = isVideo ? "videos" : "images";
-
+        // We always store in the "images" folder (GIF included)
         const storageRef = ref(
           storage,
-          `${folderName}/${mediaFile.name}_${Date.now()}`
+          `images/${imageFile.name}_${Date.now()}`
         );
-        const snapshot = await uploadBytes(storageRef, mediaFile);
-        console.log("Media uploaded, snapshot:", snapshot);
+        const snapshot = await uploadBytes(storageRef, imageFile);
+        console.log("Image uploaded, snapshot:", snapshot);
         imageUrl = await getDownloadURL(snapshot.ref);
-        console.log("Retrieved media URL:", imageUrl);
+        console.log("Retrieved image URL:", imageUrl);
       } else {
-        console.log("No media file provided.");
+        console.log("No image file provided.");
       }
 
       // Ensure date is valid
@@ -45,19 +42,20 @@ export default function MemoryForm() {
       }
 
       const payload = {
-        title,        // optional
-        caption,      // optional
+        title,
+        caption,
         date: Timestamp.fromDate(dateObj),
-        imageUrl,     // store imageUrl for both images and videos
+        imageUrl,
       };
       console.log("Payload to be added to Firestore:", payload);
+
       // Write to the "MemoryWall" collection
       await addDoc(collection(db, "MemoryWall"), payload);
       console.log("Memory document added successfully.");
       setTitle("");
       setCaption("");
       setDate("");
-      setMediaFile(null);
+      setImageFile(null);
       alert("Memory uploaded successfully!");
     } catch (error: unknown) {
       console.error("Error uploading memory:", error);
@@ -154,23 +152,23 @@ export default function MemoryForm() {
             }}
           />
         </div>
-        {/* Media (Image or Video) Input */}
+        {/* Image Input (GIFs included) */}
         <div>
           <label
-            htmlFor="media"
+            htmlFor="image"
             className="block mb-1 font-medium"
             style={{ color: "var(--foreground)" }}
           >
-            Upload Media (Image or Video)
+            Upload Image (GIFs included)
           </label>
           <input
-            id="media"
+            id="image"
             type="file"
-            accept="image/*,video/*" // accept both
+            accept="image/*" // includes gif
             onChange={(e) => {
               if (e.target.files) {
                 console.log("Selected file:", e.target.files[0].name);
-                setMediaFile(e.target.files[0]);
+                setImageFile(e.target.files[0]);
               }
             }}
             className="w-full"
