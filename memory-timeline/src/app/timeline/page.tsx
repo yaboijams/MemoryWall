@@ -10,8 +10,8 @@ interface Memory {
   id: string;
   title?: string;      // Optional title field
   caption?: string;    // Optional caption field
-  date: Timestamp;     // Firestore Timestamp field (replaced any)
-  imageUrl?: string;
+  date: Timestamp;     // Firestore Timestamp field
+  imageUrl?: string;   // Field for both images and videos
 }
 
 /**
@@ -23,13 +23,18 @@ function getRotationAngle(key: string): number {
   for (let i = 0; i < key.length; i++) {
     hash = key.charCodeAt(i) + ((hash << 5) - hash);
   }
-  return (Math.abs(hash) % 7) - 3; // Range: -3 to 3 degrees
+  return (Math.abs(hash) % 7) - 3;
+}
+
+/** Checks if the file extension is a video type (naive check) */
+function isVideoFile(url: string): boolean {
+  return /\.(mp4|mov|webm|ogg)$/i.test(url);
 }
 
 export default function Timeline() {
   const [memories, setMemories] = useState<Memory[]>([]);
 
-  // Fetch memories from Firestore from the "MemoryWall" collection
+  // Fetch memories from Firestore
   useEffect(() => {
     async function fetchMemories() {
       try {
@@ -52,10 +57,7 @@ export default function Timeline() {
     <div className="p-4">
       {/* Sweet Message Heading */}
       <div className="max-w-2xl mx-auto text-center mb-8">
-        <h2
-          className="text-3xl font-bold mb-4"
-          style={{ color: "var(--primary)" }}
-        >
+        <h2 className="text-3xl font-bold mb-4" style={{ color: "var(--primary)" }}>
           My Beautiful Headache
         </h2>
         <p className="italic text-lg" style={{ color: "var(--foreground)" }}>
@@ -69,6 +71,7 @@ export default function Timeline() {
           P.S. Only we have access to this special space.
         </p>
       </div>
+
       {memories.length === 0 ? (
         <p className="text-center" style={{ color: "var(--foreground)" }}>
           No memories found.
@@ -92,15 +95,23 @@ export default function Timeline() {
               <p className="text-sm mb-2" style={{ color: "var(--text)" }}>
                 {new Date(memory.date.seconds * 1000).toLocaleDateString()}
               </p>
-              {memory.imageUrl && (
+              {/* Display either a video or an image */}
+              {memory.imageUrl && isVideoFile(memory.imageUrl) ? (
+                <video
+                  src={memory.imageUrl}
+                  controls
+                  className="w-full h-64 object-contain rounded mb-2"
+                />
+              ) : memory.imageUrl ? (
                 <Image
                   src={memory.imageUrl}
                   alt="Memory"
-                  width={600} // adjust as needed
-                  height={256} // adjust as needed
+                  width={600}
+                  height={256}
                   className="rounded mb-2 object-contain"
                 />
-              )}
+              ) : null}
+
               {memory.title && (
                 <p
                   className="text-xl font-bold text-center"

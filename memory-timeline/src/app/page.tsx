@@ -105,12 +105,12 @@ export default function Home() {
                 className="rounded object-contain"
               />
               {/* Description area for the preview slider */}
-              <div
+              {/* <div
                 className="mt-2 text-center text-sm italic"
                 style={{ color: "var(--text)" }}
               >
                 {memories[previewIndex].caption}
-              </div>
+              </div> */}
             </motion.div>
           </AnimatePresence>
         </div>
