@@ -121,40 +121,32 @@ export default function Header() {
         </nav>
         {/* Mobile Navigation */}
         <div className="md:hidden flex items-center">
-          {user ? (
-            <button
-              onClick={handleSignOut}
-              className="px-3 py-1 rounded bg-red-500 text-white mr-4"
-            >
-              Sign Out
-            </button>
-          ) : (
-            <button
-              onClick={toggleTheme}
-              className="px-3 py-1 rounded bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 mr-4"
-            >
-              {isDark ? (
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-5 w-5 inline-block"
-                  fill="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path d="M12 4.354a1 1 0 011 1v1.292a1 1 0 11-2 0V5.354a1 1 0 011-1zm5.657 2.343a1 1 0 010 1.414l-.916.917a1 1 0 11-1.414-1.414l.917-.917a1 1 0 011.413 0zM20 11a1 1 0 110 2h-1.292a1 1 0 110-2H20zM17.657 16.314a1 1 0 01-1.414 0l-.917-.917a1 1 0 011.414-1.414l.917.917a1 1 0 010 1.414zM12 17.354a1 1 0 011 1v1.292a1 1 0 11-2 0v-1.292a1 1 0 011-1zm-5.657-1.04a1 1 0 010-1.414l.917-.917a1 1 0 011.414 1.414l-.917.917a1 1 0 01-1.414 0zM4 11a1 1 0 110 2H2.708a1 1 0 110-2H4zm2.343-4.657a1 1 0 011.414 0l.917.917a1 1 0 11-1.414 1.414l-.917-.917a1 1 0 010-1.414z" />
-                  <path d="M12 8a4 4 0 100 8 4 4 0 000-8z" />
-                </svg>
-              ) : (
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-5 w-5 inline-block"
-                  fill="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" />
-                </svg>
-              )}
-            </button>
-          )}
+          {/* Sign-out button removed, only the theme toggle is here */}
+          <button
+            onClick={toggleTheme}
+            className="px-3 py-1 rounded bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 mr-4"
+          >
+            {isDark ? (
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-5 w-5 inline-block"
+                fill="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path d="M12 4.354a1 1 0 011 1v1.292a1 1 0 11-2 0V5.354a1 1 0 011-1zm5.657 2.343a1 1 0 010 1.414l-.916.917a1 1 0 11-1.414-1.414l.917-.917a1 1 0 011.413 0zM20 11a1 1 0 110 2h-1.292a1 1 0 110-2H20zM17.657 16.314a1 1 0 01-1.414 0l-.917-.917a1 1 0 011.414-1.414l.917.917a1 1 0 010 1.414zM12 17.354a1 1 0 011 1v1.292a1 1 0 11-2 0v-1.292a1 1 0 011-1zm-5.657-1.04a1 1 0 010-1.414l.917-.917a1 1 0 011.414 1.414l-.917.917a1 1 0 01-1.414 0zM4 11a1 1 0 110 2H2.708a1 1 0 110-2H4zm2.343-4.657a1 1 0 011.414 0l.917.917a1 1 0 11-1.414 1.414l-.917-.917a1 1 0 010-1.414z" />
+                <path d="M12 8a4 4 0 100 8 4 4 0 000-8z" />
+              </svg>
+            ) : (
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-5 w-5 inline-block"
+                fill="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" />
+              </svg>
+            )}
+          </button>
           <MobileNavbar />
         </div>
       </div>
