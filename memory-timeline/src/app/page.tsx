@@ -89,7 +89,7 @@ export default function Home() {
       </motion.p>
 
       {/* Preview Slider with Polaroid Style */}
-      <div className="w-full max-w-md">
+      <div className="w-full max-w-3xl h-[500px] flex items-center justify-center">
         <AnimatePresence mode="wait">
           <motion.div
             key={previewImages[previewIndex]}
@@ -103,10 +103,13 @@ export default function Home() {
             <img
               src={previewImages[previewIndex]}
               alt="Memory Preview"
-              className="w-full rounded"
+              className="w-full h-[500px] object-contain rounded"
             />
             {/* Description area for the preview slider */}
-            <div className="mt-2 text-center text-sm italic" style={{ color: "var(--foreground)" }}>
+            <div
+              className="mt-2 text-center text-sm italic"
+              style={{ color: "var(--foreground)" }}
+            >
               A glimpse into precious moments.
             </div>
           </motion.div>
@@ -153,7 +156,10 @@ export default function Home() {
                         className="w-full rounded"
                       />
                       {/* Space for description or thoughtful text */}
-                      <div className="mt-2 text-center text-sm italic" style={{ color: "var(--foreground)" }}>
+                      <div
+                        className="mt-2 text-center text-sm italic"
+                        style={{ color: "var(--foreground)" }}
+                      >
                         {memory.description || "A treasured memory."}
                       </div>
                     </motion.div>
@@ -171,7 +177,10 @@ export default function Home() {
                         alt="Preview Placeholder"
                         className="w-full rounded"
                       />
-                      <div className="mt-2 text-center text-sm italic" style={{ color: "var(--foreground)" }}>
+                      <div
+                        className="mt-2 text-center text-sm italic"
+                        style={{ color: "var(--foreground)" }}
+                      >
                         A treasured memory.
                       </div>
                     </motion.div>
