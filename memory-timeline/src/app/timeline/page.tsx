@@ -2,14 +2,15 @@
 
 import { useEffect, useState } from "react";
 import { db } from "@/firebase/firebaseConfig";
-import { collection, getDocs, query, orderBy } from "firebase/firestore";
+import { collection, getDocs, query, orderBy, Timestamp } from "firebase/firestore";
 import { motion } from "framer-motion";
+import Image from "next/image";
 
 interface Memory {
   id: string;
   title?: string;      // Optional title field
   caption?: string;    // Optional caption field
-  date: any;           // Firestore Timestamp field
+  date: Timestamp;     // Firestore Timestamp field (replaced any)
   imageUrl?: string;
 }
 
@@ -49,18 +50,37 @@ export default function Timeline() {
 
   return (
     <div className="p-4">
-      <h2 className="text-2xl font-bold mb-4" style={{ color: "var(--primary)" }}>
-        Your Memory Timeline
-      </h2>
+      {/* Sweet Message Heading */}
+      <div className="max-w-2xl mx-auto text-center mb-8">
+        <h2
+          className="text-3xl font-bold mb-4"
+          style={{ color: "var(--primary)" }}
+        >
+          My Beautiful Headache
+        </h2>
+        <p className="italic text-lg" style={{ color: "var(--foreground)" }}>
+          Nyah, I still remember that Valentine&apos;s Day when you asked
+          about my earring while I was tabling for TKE. Ever since then, our
+          bond has grown deeper, and every memory with you is a treasure. I
+          built this app as a token of my appreciation for you and for all the
+          memories we have yet to create together.
+          <br />
+          <br />
+          P.S. Only we have access to this special space.
+        </p>
+      </div>
       {memories.length === 0 ? (
         <p className="text-center" style={{ color: "var(--foreground)" }}>
           No memories found.
         </p>
       ) : (
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 w-full max-w-7xl mx-auto">
-          {memories.map((memory) => (
+          {memories.map((memory, index) => (
             <motion.div
               key={memory.id}
+              initial={{ opacity: 0, y: 50 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.1, duration: 0.5 }}
               whileHover={{ scale: 1.05 }}
               className="bg-white p-4 shadow-xl"
               style={{
@@ -69,14 +89,16 @@ export default function Timeline() {
                 borderRadius: "0.5rem",
               }}
             >
-              <p className="text-sm mb-2" style={{ color: "var(--foreground)" }}>
-                {new Date(memory.date?.seconds * 1000).toLocaleDateString()}
+              <p className="text-sm mb-2" style={{ color: "var(--text)" }}>
+                {new Date(memory.date.seconds * 1000).toLocaleDateString()}
               </p>
               {memory.imageUrl && (
-                <img
+                <Image
                   src={memory.imageUrl}
                   alt="Memory"
-                  className="w-full rounded mb-2"
+                  width={600} // adjust as needed
+                  height={256} // adjust as needed
+                  className="rounded mb-2 object-contain"
                 />
               )}
               {memory.title && (
@@ -89,7 +111,7 @@ export default function Timeline() {
               )}
               <div
                 className="mt-2 text-center text-sm italic"
-                style={{ color: "var(--foreground)" }}
+                style={{ color: "var(--text)" }}
               >
                 {memory.caption || "A treasured memory."}
               </div>

@@ -50,9 +50,13 @@ export default function MemoryForm() {
       setDate("");
       setImageFile(null);
       alert("Memory uploaded successfully!");
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Error uploading memory:", error);
-      alert("Failed to upload memory: " + error.message);
+      if (error instanceof Error) {
+        alert("Failed to upload memory: " + error.message);
+      } else {
+        alert("Failed to upload memory.");
+      }
     }
     setLoading(false);
   };

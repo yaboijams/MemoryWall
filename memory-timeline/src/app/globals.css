@@ -2,7 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Light Mode Theme */
+/* Light Mode Theme (default) */
 :root {
   --background: #ffffff;
   --foreground: #333333;
@@ -10,22 +10,46 @@
   --secondary: #FFC0CB; /* Light pink */
   --accent: #FFFACD;    /* Pastel yellow */
   --neutral: #f5f5f5;
+  --text: #333;
 }
 
-/* Dark Mode Theme */
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #1e1e2f;
-    --foreground: #f5f5f5;
-    --primary: #89CFF0;   /* Retain baby blue for consistency */
-    --secondary: #ffb6c1; /* A slightly bolder pink */
-    --accent: #fffacd;    /* Keep pastel yellow */
-    --neutral: #333333;
-  }
+/* Dark Mode Theme via class */
+html.dark {
+  --background: #1e1e2f;
+  --foreground: #f5f5f5;
+  --primary: #89CFF0;   /* Retain baby blue for consistency */
+  --secondary: #ffb6c1; /* A slightly bolder pink */
+  --accent: #fffacd;    /* Keep pastel yellow */
+  --neutral: #333333;
+  --text: #333;
 }
 
 body {
   color: var(--foreground);
   background: var(--background);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Animated gradient text for the title */
+.gradient-text {
+  background: linear-gradient(270deg, var(--primary), var(--secondary), var(--accent));
+  background-size: 600% 600%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: gradientAnimation 8s ease infinite;
+  /* Added text-shadow for extra contrast and a sweet, subtle feel */
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+
+@keyframes gradientAnimation {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
 }
